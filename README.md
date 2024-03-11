@@ -1,5 +1,3 @@
-<img width="25%" align="right" alt="Gauthier" src="img\Telegram_Mogs5CGuT0.png">
-
 # ProxyCheckerTgBot
 
 Этот бот представляет собой мощный и эффективный чекер прокси, разработанный для обеспечения безопасности и надежности вашего интернет-соединения. С его помощью вы легко и быстро можете проверить работоспособность прокси-серверов, гарантируя стабильность вашего интернет-трафика.
@@ -38,5 +36,8 @@ crystal_pay_salt = ''
 ```
 python main.py
 ```
+
+<img width="25%" align="right" alt="Gauthier" src="img\Telegram_Mogs5CGuT0.png">
+
 
 Script by <a href='https://github.com/reques6e' style='display: block; text-align: center;'>Requeste Project<img src='https://github.com/reques6e/reques6e/blob/main/assets/images.png?v=1' alt='Мой баннер' width='20' height='20' style='float: right;'></a>
