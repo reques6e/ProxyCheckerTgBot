@@ -25,7 +25,6 @@ from config import (
 crystalPay = AsyncCrystalPay(crystal_pay_login, crystal_pay_secret, crystal_pay_salt)
 
 
-allowed_users = [1]
 
 async def reset_use_periodically():
     """ Обнуляем использования в день у пользователей """
@@ -69,24 +68,6 @@ async def start(message: types.Message):
         db[user_id] = new_data
 
     await save_db(db)
-
-
-    # if user_id not in allowed_users:
-    #     video_path = os.path.join(current_directory, "video.mp4")
-    #     video = open(video_path, "rb")
-    #     try:
-    #         await bot.delete_message(message.chat.id, message.message_id)
-    #     except MessageToDeleteNotFound as e:
-    #         print(f"Ошибка удаления сообщения: {e}")
-        
-    #     sent_message = await bot.send_video(message.chat.id, video, caption="<b>⛔️ В доступе отказано.</b>", parse_mode='HTML')
-    #     video.close()
-
-    #     delete_button = InlineKeyboardButton("Удалить сообщение", callback_data=f'delete_message_{sent_message.message_id}')
-    #     keyboard = InlineKeyboardMarkup().add(delete_button)
-
-    #     await bot.edit_message_reply_markup(message.chat.id, message_id=sent_message.message_id, reply_markup=keyboard)
-    #     return
 
     await bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAJdhWVZT1v5RNc1j8EXE9zMrpR79XaDAAI7AwACtXHaBhhLBtJVU8tEMwQ')
     await message.reply(f"👋 {message.from_user.first_name}, <b>добро пожаловать в бот проверки прокси, IPv4.</b>",
@@ -376,14 +357,11 @@ async def process_personal_message_id(message: types.Message, state: FSMContext)
     try:
         user_id = int(message.text)
 
-        if user_id in allowed_users:
-            await state.update_data(user_id=user_id)
-            await bot.send_message(message.chat.id,
-                                   "Введите сообщение, которое хотите отправить этому пользователю:")
-            await SomeState.waiting_for_personal_message_text.set()
-        else:
-            await message.reply("Этот пользователь не имеет доступа к боту.")
-            await state.finish()
+        await state.update_data(user_id=user_id)
+        await bot.send_message(message.chat.id,
+                                "Введите сообщение, которое хотите отправить этому пользователю:")
+        await SomeState.waiting_for_personal_message_text.set()
+
     except ValueError:
         await message.reply("Ошибка. Введите корректный ID пользователя.")
 
@@ -394,23 +372,20 @@ async def process_personal_message_text(message: types.Message, state: FSMContex
         user_id = data.get('user_id')
         personal_message = message.text
 
-        if user_id in allowed_users:
-            delete_button = types.InlineKeyboardButton("🗑Удалить", callback_data='delete_admin_menu')
-            delete_message = types.InlineKeyboardMarkup().add(delete_button)
-            await bot.send_message(
-                user_id,
-                personal_message,
-                parse_mode='HTML',
-                reply_markup=delete_message
-            )
-            await bot.send_message(
-                message.chat.id,
-                f"Личное сообщение было успешно отправлено пользователю с ID <code>{user_id}</code>.",
-                parse_mode='HTML',
-                reply_markup=generate_admin_keyboard()
-            )
-        else:
-            await message.reply("Этот пользователь больше не имеет доступа к боту.")
+        delete_button = types.InlineKeyboardButton("🗑Удалить", callback_data='delete_admin_menu')
+        delete_message = types.InlineKeyboardMarkup().add(delete_button)
+        await bot.send_message(
+            user_id,
+            personal_message,
+            parse_mode='HTML',
+            reply_markup=delete_message
+        )
+        await bot.send_message(
+            message.chat.id,
+            f"Личное сообщение было успешно отправлено пользователю с ID <code>{user_id}</code>.",
+            parse_mode='HTML',
+            reply_markup=generate_admin_keyboard()
+        )
     except Exception as e:
         await message.reply("Произошла ошибка при отправке сообщения. Попробуйте еще раз.")
     finally:
@@ -464,13 +439,10 @@ async def process_revoke_access(message: types.Message, state: FSMContext):
 async def handle_messages(message: types.Message):
     user_id = message.from_user.id
 
-    if user_id not in allowed_users:
-        try:
-            await bot.delete_message(message.chat.id, message.message_id)
-            await bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAJc5GVXHyKMoj-oSZYYNhrirj9egu_DAAIoAwACtXHaBpB6SodelUpuMwQ')
-        except Exception as e:
-            print(f"Ошибка удаления сообщения: {e}")
-    else:
+    try:
+        await bot.delete_message(message.chat.id, message.message_id)
+        await bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAJc5GVXHyKMoj-oSZYYNhrirj9egu_DAAIoAwACtXHaBpB6SodelUpuMwQ')
+    except Exception as e:
         await message.reply(f"<b>⚠️ К сожалению, я не смог распознать Вашу команду.</b>", parse_mode='HTML', reply_markup=kb.keyboard)
         
 
