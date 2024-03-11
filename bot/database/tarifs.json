@@ -1,0 +1,28 @@
+{
+    "tarifs": {
+        "Mini": {
+            "emoji":"🔑",
+            "copyright": false,
+            "adsense": true,
+            "kd": 500,
+            "price": 50,
+            "id": "1"  
+        },
+        "Medium": {
+            "emoji":"🕯",
+            "copyright": false,
+            "adsense": true,
+            "kd": 700,
+            "price": 100,
+            "id": "2"            
+        },
+        "Ultra": {
+            "emoji":"⚔️",
+            "copyright": false,
+            "adsense": false,
+            "kd": 1000,
+            "price": 150,
+            "id": "3"         
+        }
+    }
+}
